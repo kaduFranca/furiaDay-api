@@ -5,7 +5,7 @@ const router = express.Router();
 const supabase = require('../supabase/client');
 
 // Enviar uma nova mensagem
-router.post('/', async (req, res) => {
+router.post('/messages', async (req, res) => {
   const { userId, message } = req.body;
 
   if (!userId || !message) {
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
 });
 
 // Obter todas as mensagens
-router.get('/', async (req, res) => {
+router.get('/messages', async (req, res) => {
   try {
     const { data: messages, error } = await supabase
       .from('messages')
