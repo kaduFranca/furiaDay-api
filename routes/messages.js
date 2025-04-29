@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
     const { data, error } = await supabase
       .from('messages')
       .insert([
-        { user_id: userId, content: message }
+        { user_id: userId, message: message }
       ]);
 
     if (error) return res.status(500).json({ error: error.message });
