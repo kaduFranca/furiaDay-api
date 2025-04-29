@@ -1,64 +1,39 @@
-// routes/messages.js
+// api/messages.js
 
-const express = require('express');
-const router = express.Router();
-const supabase = require('../supabase/client');
+const { createClient } = require('@supabase/supabase-js');
 
-// Enviar uma nova mensagem
-router.post('/', async (req, res) => {
-  const { userId, message } = req.body;
+// Conecta no Supabase
+const supabase = createClient(
+  'https://rlvblksgyvczdtxctspj.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsdmJsa3NneXZjemR0eGN0c3BqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NTg4Mzc1OCwiZXhwIjoyMDYxNDU5NzU4fQ.34ORfCD6xjoNW1PnjHyIU8sZrGpoW9c6eZkvZLCU4OE'
+);
 
-  if (!userId || !message) {
-    return res.status(400).json({ error: 'userId e message são obrigatórios' });
-  }
+module.exports = async (req, res) => {
+  if (req.method === 'POST') {
+    const { userId, message } = req.body;
 
-  try {
-    // Inserir a mensagem do usuário
-    const { data: userMessage, error: userError } = await supabase
+    if (!userId || !message) {
+      return res.status(400).json({ error: 'userId e message são obrigatórios' });
+    }
+
+    const { data, error } = await supabase
       .from('messages')
-      .insert([{ user_id: userId, message }])
-      .select()
-      .single();
+      .insert([
+        { user_id: userId, content: message }
+      ]);
 
-    if (userError) throw userError;
+    if (error) return res.status(500).json({ error: error.message });
 
-    // Simular resposta do bot
-    const botReply = `Recebi sua mensagem: "${message}"`;
-
-    // Inserir a resposta do bot
-    const { data: botMessage, error: botError } = await supabase
+    res.status(201).json({ data });
+  } else if (req.method === 'GET') {
+    const { data, error } = await supabase
       .from('messages')
-      .insert([{ user_id: 'bot', message: botReply }])
-      .select()
-      .single();
+      .select('*');
 
-    if (botError) throw botError;
+    if (error) return res.status(500).json({ error: error.message });
 
-    res.status(201).json({
-      userMessage,
-      botMessage,
-    });
-  } catch (error) {
-    console.error('Erro ao processar a mensagem:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    res.status(200).json({ data });
+  } else {
+    res.status(405).json({ error: 'Método não permitido' });
   }
-});
-
-// Obter todas as mensagens
-router.get('/', async (req, res) => {
-  try {
-    const { data: messages, error } = await supabase
-      .from('messages')
-      .select('*')
-      .order('created_at', { ascending: true });
-
-    if (error) throw error;
-
-    res.status(200).json(messages);
-  } catch (error) {
-    console.error('Erro ao obter mensagens:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
-  }
-});
-
-module.exports = router;
+};
