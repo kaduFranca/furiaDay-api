@@ -57,10 +57,7 @@ async function handlePost(req, res) {
       return res.status(500).json({ error: userError.message });
     }
 
-    // Aguardar um pequeno intervalo para garantir que o timestamp do bot seja posterior
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    // Gerar e salvar resposta do bot
+    // Só depois que a mensagem do usuário for persistida, geramos e salvamos a resposta do bot
     const botResponse = messageProcessor.processMessage(content);
     const { data: botMessage, error: botError } = await supabase
       .from('messages')
