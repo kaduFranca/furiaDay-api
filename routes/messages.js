@@ -35,18 +35,14 @@ module.exports = async (req, res) => {
 };
 
 async function handlePost(req, res) {
+  const { content, timestamp } = req.body;
+
+  if (!content || typeof content !== 'string') {
+    return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório e deve ser uma string' });
+  }
+
   try {
-    if (!req.body) {
-      return res.status(400).json({ error: 'O corpo da requisição está vazio' });
-    }
-
-    const { content, timestamp } = req.body;
-
-    if (!content || typeof content !== 'string') {
-      return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório e deve ser uma string' });
-    }
-
-    // Salvar mensagem do usuário
+    // Salvar mensagem do usuário primeiro
     const { data: userMessage, error: userError } = await supabase
       .from('messages')
       .insert({ 
@@ -58,15 +54,14 @@ async function handlePost(req, res) {
       .single();
 
     if (userError) {
-      console.error('Erro ao salvar mensagem do usuário:', userError);
       return res.status(500).json({ error: userError.message });
     }
 
-    // Processar mensagem e gerar resposta do bot
-    console.log('Processando mensagem:', content);
-    const botResponse = messageProcessor.processMessage(content);
-    console.log('Resposta do bot:', botResponse);
+    // Aguardar um pequeno intervalo para garantir que o timestamp do bot seja posterior
+    await new Promise(resolve => setTimeout(resolve, 100));
 
+    // Gerar e salvar resposta do bot
+    const botResponse = messageProcessor.processMessage(content);
     const { data: botMessage, error: botError } = await supabase
       .from('messages')
       .insert({ 
@@ -78,7 +73,6 @@ async function handlePost(req, res) {
       .single();
 
     if (botError) {
-      console.error('Erro ao salvar mensagem do bot:', botError);
       return res.status(500).json({ error: botError.message });
     }
 
@@ -87,7 +81,6 @@ async function handlePost(req, res) {
       botMessage
     });
   } catch (error) {
-    console.error('Erro geral:', error);
     return res.status(500).json({ error: error.message });
   }
 }
