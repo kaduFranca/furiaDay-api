@@ -104,7 +104,18 @@ async function handleGet(res) {
       return res.status(500).json({ error: error.message });
     }
 
-    return res.status(200).json(data);
+    // Agrupar mensagens do usuário com suas respectivas respostas do bot
+    const groupedMessages = [];
+    for (let i = 0; i < data.length; i += 2) {
+      if (i + 1 < data.length) {
+        groupedMessages.push({
+          userMessage: data[i],
+          botMessage: data[i + 1]
+        });
+      }
+    }
+
+    return res.status(200).json(groupedMessages);
   } catch (error) {
     console.error('Erro geral:', error);
     return res.status(500).json({ error: error.message });
