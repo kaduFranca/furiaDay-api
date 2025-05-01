@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
 };
 
 async function handlePost(req, res) {
-  const { content, timestamp } = req.body;
+  const { content, timestamp, isBot } = req.body;
 
   if (!content) {
     return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório' });
@@ -27,7 +27,8 @@ async function handlePost(req, res) {
     .from('messages')
     .insert({ 
       content,
-      timestamp: timestamp || new Date().toISOString()
+      timestamp: timestamp || new Date().toISOString(),
+      isBot: isBot || false
     });
 
   if (error) {
