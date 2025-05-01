@@ -17,15 +17,18 @@ module.exports = async (req, res) => {
 };
 
 async function handlePost(req, res) {
-  const { userId, message } = req.body;
+  const { content, timestamp } = req.body;
 
-  if (!userId || !message) {
-    return res.status(400).json({ error: 'userId e message são obrigatórios' });
+  if (!content) {
+    return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório' });
   }
 
   const { data, error } = await supabase
     .from('messages')
-    .insert({ user_id: userId, message });
+    .insert({ 
+      content,
+      timestamp: timestamp || new Date().toISOString()
+    });
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -37,11 +40,12 @@ async function handlePost(req, res) {
 async function handleGet(res) {
   const { data, error } = await supabase
     .from('messages')
-    .select('*');
+    .select('*')
+    .order('timestamp', { ascending: true });
 
   if (error) {
     return res.status(500).json({ error: error.message });
   }
 
-  return res.status(200).json({ data });
+  return res.status(200).json(data);
 }
