@@ -5,6 +5,20 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsdmJsa3NneXZjemR0eGN0c3BqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NTg4Mzc1OCwiZXhwIjoyMDYxNDU5NzU4fQ.34ORfCD6xjoNW1PnjHyIU8sZrGpoW9c6eZkvZLCU4OE'
 );
 
+// Função para gerar resposta mock do bot
+function generateBotResponse(userMessage) {
+  const responses = [
+    "FURIA é a melhor equipe do mundo!",
+    "Vamos FURIA!",
+    "FURIA sempre no topo!",
+    "FURIA é sinônimo de vitória!",
+    "FURIA é pura emoção!"
+  ];
+  
+  const randomIndex = Math.floor(Math.random() * responses.length);
+  return responses[randomIndex];
+}
+
 module.exports = async (req, res) => {
   switch (req.method) {
     case 'POST':
@@ -17,25 +31,51 @@ module.exports = async (req, res) => {
 };
 
 async function handlePost(req, res) {
-  const { content, timestamp, isBot } = req.body;
+  const { content, timestamp } = req.body;
 
   if (!content) {
     return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório' });
   }
 
-  const { data, error } = await supabase
-    .from('messages')
-    .insert({ 
-      content,
-      timestamp: timestamp || new Date().toISOString(),
-      isBot: isBot || false
-    });
+  try {
+    // Salvar mensagem do usuário
+    const { data: userMessage, error: userError } = await supabase
+      .from('messages')
+      .insert({ 
+        content,
+        timestamp: timestamp || new Date().toISOString(),
+        isBot: false
+      })
+      .select()
+      .single();
 
-  if (error) {
+    if (userError) {
+      return res.status(500).json({ error: userError.message });
+    }
+
+    // Gerar e salvar resposta do bot
+    const botResponse = generateBotResponse(content);
+    const { data: botMessage, error: botError } = await supabase
+      .from('messages')
+      .insert({ 
+        content: botResponse,
+        timestamp: new Date().toISOString(),
+        isBot: true
+      })
+      .select()
+      .single();
+
+    if (botError) {
+      return res.status(500).json({ error: botError.message });
+    }
+
+    return res.status(201).json({
+      userMessage,
+      botMessage
+    });
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-
-  return res.status(201).json({ data });
 }
 
 async function handleGet(res) {
