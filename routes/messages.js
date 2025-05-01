@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const messageProcessor = require('../services/messageProcessor');
 
 const supabase = createClient(
   'https://rlvblksgyvczdtxctspj.supabase.co',
@@ -53,8 +54,8 @@ async function handlePost(req, res) {
       return res.status(500).json({ error: userError.message });
     }
 
-    // Gerar e salvar resposta do bot
-    const botResponse = generateBotResponse(content);
+    // Processar mensagem e gerar resposta do bot
+    const botResponse = messageProcessor.processMessage(content);
     const { data: botMessage, error: botError } = await supabase
       .from('messages')
       .insert({ 
