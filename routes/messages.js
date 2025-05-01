@@ -108,9 +108,13 @@ async function handleGet(res) {
     const groupedMessages = [];
     for (let i = 0; i < data.length; i += 2) {
       if (i + 1 < data.length) {
+        // Identificar qual mensagem é do usuário e qual é do bot
+        const userMsg = data[i].isBot ? data[i + 1] : data[i];
+        const botMsg = data[i].isBot ? data[i] : data[i + 1];
+
         groupedMessages.push({
-          userMessage: data[i],
-          botMessage: data[i + 1]
+          userMessage: userMsg,
+          botMessage: botMsg
         });
       }
     }
