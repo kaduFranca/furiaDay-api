@@ -21,6 +21,9 @@ function generateBotResponse(userMessage) {
 }
 
 module.exports = async (req, res) => {
+  console.log('Request method:', req.method);
+  console.log('Request body:', req.body);
+
   switch (req.method) {
     case 'POST':
       return await handlePost(req, res);
@@ -32,13 +35,17 @@ module.exports = async (req, res) => {
 };
 
 async function handlePost(req, res) {
-  const { content, timestamp } = req.body;
-
-  if (!content) {
-    return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório' });
-  }
-
   try {
+    if (!req.body) {
+      return res.status(400).json({ error: 'O corpo da requisição está vazio' });
+    }
+
+    const { content, timestamp } = req.body;
+
+    if (!content || typeof content !== 'string') {
+      return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório e deve ser uma string' });
+    }
+
     // Salvar mensagem do usuário
     const { data: userMessage, error: userError } = await supabase
       .from('messages')
@@ -51,11 +58,15 @@ async function handlePost(req, res) {
       .single();
 
     if (userError) {
+      console.error('Erro ao salvar mensagem do usuário:', userError);
       return res.status(500).json({ error: userError.message });
     }
 
     // Processar mensagem e gerar resposta do bot
+    console.log('Processando mensagem:', content);
     const botResponse = messageProcessor.processMessage(content);
+    console.log('Resposta do bot:', botResponse);
+
     const { data: botMessage, error: botError } = await supabase
       .from('messages')
       .insert({ 
@@ -67,6 +78,7 @@ async function handlePost(req, res) {
       .single();
 
     if (botError) {
+      console.error('Erro ao salvar mensagem do bot:', botError);
       return res.status(500).json({ error: botError.message });
     }
 
@@ -75,19 +87,26 @@ async function handlePost(req, res) {
       botMessage
     });
   } catch (error) {
+    console.error('Erro geral:', error);
     return res.status(500).json({ error: error.message });
   }
 }
 
 async function handleGet(res) {
-  const { data, error } = await supabase
-    .from('messages')
-    .select('*')
-    .order('timestamp', { ascending: true });
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .order('timestamp', { ascending: true });
 
-  if (error) {
+    if (error) {
+      console.error('Erro ao buscar mensagens:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error('Erro geral:', error);
     return res.status(500).json({ error: error.message });
   }
-
-  return res.status(200).json(data);
 }
