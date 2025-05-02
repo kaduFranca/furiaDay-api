@@ -1,24 +1,11 @@
 const { createClient } = require('@supabase/supabase-js');
 const messageProcessor = require('../services/messageProcessor');
 
+// Eu sei que é errado, mas não funcionou com variáveis de ambiente.
 const supabase = createClient(
   'https://rlvblksgyvczdtxctspj.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsdmJsa3NneXZjemR0eGN0c3BqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NTg4Mzc1OCwiZXhwIjoyMDYxNDU5NzU4fQ.34ORfCD6xjoNW1PnjHyIU8sZrGpoW9c6eZkvZLCU4OE'
 );
-
-// Função para gerar resposta mock do bot
-function generateBotResponse(userMessage) {
-  const responses = [
-    "FURIA é a melhor equipe do mundo!",
-    "Vamos FURIA!",
-    "FURIA sempre no topo!",
-    "FURIA é sinônimo de vitória!",
-    "FURIA é pura emoção!"
-  ];
-  
-  const randomIndex = Math.floor(Math.random() * responses.length);
-  return responses[randomIndex];
-}
 
 module.exports = async (req, res) => {
   console.log('Request method:', req.method);
@@ -35,7 +22,7 @@ module.exports = async (req, res) => {
 };
 
 async function handlePost(req, res) {
-  const { content, timestamp } = req.body;
+  const { content, timestamp, options } = req.body;
 
   if (!content || typeof content !== 'string') {
     return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório e deve ser uma string' });
@@ -48,7 +35,8 @@ async function handlePost(req, res) {
       .insert({ 
         content,
         timestamp: timestamp || new Date().toISOString(),
-        isBot: false
+        isBot: false,
+        options: JSON.stringify(options || [])
       })
       .select()
       .single();
@@ -62,9 +50,10 @@ async function handlePost(req, res) {
     const { data: botMessage, error: botError } = await supabase
       .from('messages')
       .insert({ 
-        content: botResponse,
+        content: botResponse.content,
         timestamp: new Date().toISOString(),
-        isBot: true
+        isBot: true,
+        options: JSON.stringify(botResponse.options)
       })
       .select()
       .single();
@@ -101,6 +90,10 @@ async function handleGet(res) {
         // Identificar qual mensagem é do usuário e qual é do bot
         const userMsg = data[i].isBot ? data[i + 1] : data[i];
         const botMsg = data[i].isBot ? data[i] : data[i + 1];
+
+        // Converter as opções de string JSON para array
+        userMsg.options = JSON.parse(userMsg.options || '[]');
+        botMsg.options = JSON.parse(botMsg.options || '[]');
 
         groupedMessages.push({
           userMessage: userMsg,

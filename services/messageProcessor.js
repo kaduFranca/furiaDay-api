@@ -1,32 +1,33 @@
 const messageProcessor = {
     // Mapeamento de palavras-chave para funções
     keywordMap: {
-        'furia': 'handleFuria',
+        'hoje': 'handleHoje',
         'jogo': 'handleJogo',
         'time': 'handleTime',
+        'equipe': 'handleTime',
         'jogador': 'handleJogador',
         'partida': 'handlePartida'
     },
 
     // Funções mock para cada palavra-chave
-    handleFuria: function() {
-        return 'FURIA é o melhor time de CS:GO do Brasil!';
+    handleHoje: function() {
+        return 'furia hoje';
     },
 
     handleJogo: function() {
-        return 'O próximo jogo da FURIA será em breve!';
+        return 'furia jogo';
     },
 
     handleTime: function() {
-        return 'A FURIA é um time incrível!';
+        return 'furia time';
     },
 
     handleJogador: function() {
-        return 'Os jogadores da FURIA são muito talentosos!';
+        return 'furia jogador';
     },
 
     handlePartida: function() {
-        return 'A próxima partida da FURIA será emocionante!';
+        return 'furia partida';
     },
 
     // Função principal para processar a mensagem
