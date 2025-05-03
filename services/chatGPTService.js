@@ -7,16 +7,17 @@ class ChatGPTService {
             apiKey: process.env.OPENAI_API_KEY,
         });
         this.openai = new OpenAIApi(configuration);
+        this.maxTokens = 150; // Limite padrão de tokens
     }
 
-    async getResponse(message) {
+    async getResponse(message, maxTokens = this.maxTokens) {
         try {
             const completion = await this.openai.createChatCompletion({
                 model: "gpt-3.5-turbo",
                 messages: [
                     {
                         role: "system",
-                        content: "Você é um assistente especializado em e-sports, especialmente sobre a FURIA. Responda de forma amigável e informativa."
+                        content: "Você é um assistente especializado em e-sports, especialmente sobre a FURIA. Responda de forma amigável e informativa, mas seja conciso. Limite sua resposta a no máximo 2-3 frases."
                     },
                     {
                         role: "user",
@@ -24,7 +25,7 @@ class ChatGPTService {
                     }
                 ],
                 temperature: 0.7,
-                max_tokens: 150
+                max_tokens: maxTokens
             });
 
             return completion.data.choices[0].message.content;
