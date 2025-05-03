@@ -4,13 +4,13 @@ const messageProcessor = {
     // Mapeamento de palavras-chave para funções
     keywordMap: {
         'opções': 'handleOpcoes',
-        'Calendário': 'handleCalendario',
+        'Calendario': 'handleCalendario',
     },
 
     handleOpcoes: function() {
         return {
             content: 'O que você quer saber sobre a FURIA CS?',
-            options: ['📅 Calendário de Jogos']
+            options: ['📅 Calendario de Jogos']
         };
     },
 
