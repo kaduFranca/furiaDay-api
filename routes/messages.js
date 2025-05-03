@@ -46,7 +46,7 @@ async function handlePost(req, res) {
     }
 
     // Só depois que a mensagem do usuário for persistida, geramos e salvamos a resposta do bot
-    const botResponse = messageProcessor.processMessage(content);
+    const botResponse = await messageProcessor.processMessage(content);
     const { data: botMessage, error: botError } = await supabase
       .from('messages')
       .insert({ 

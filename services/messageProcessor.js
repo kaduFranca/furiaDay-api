@@ -13,37 +13,58 @@ const messageProcessor = {
 
     // Funções mock para cada palavra-chave
     handleHoje: function() {
-        return 'furia hoje';
+        return {
+            content: 'furia hoje',
+            options: []
+        };
     },
 
     handleJogo: function() {
-        return 'furia jogo';
+        return {
+            content: 'furia jogo',
+            options: []
+        };
     },
 
     handleTime: function() {
-        return 'furia time';
+        return {
+            content: 'furia time',
+            options: []
+        };
     },
 
     handleJogador: function() {
-        return 'furia jogador';
+        return {
+            content: 'furia jogador',
+            options: []
+        };
     },
 
     handlePartida: function() {
-        return 'furia partida';
+        return {
+            content: 'furia partida',
+            options: []
+        };
     },
 
     // Função principal para processar a mensagem
-    processMessage: async function(message) {
+    async processMessage(message) {
         console.log('Mensagem recebida no processMessage:', message);
         
         if (!message) {
             console.log('Mensagem vazia recebida');
-            return 'Por favor, envie uma mensagem válida.';
+            return {
+                content: 'Por favor, envie uma mensagem válida.',
+                options: []
+            };
         }
         
         if (typeof message !== 'string') {
             console.log('Tipo de mensagem inválido:', typeof message);
-            return 'A mensagem deve ser uma string.';
+            return {
+                content: 'A mensagem deve ser uma string.',
+                options: []
+            };
         }
 
         const lowerMessage = message.toLowerCase();
@@ -62,7 +83,11 @@ const messageProcessor = {
 
         // Se nenhuma palavra-chave for encontrada, usa o ChatGPT
         console.log('Nenhuma palavra-chave encontrada, usando ChatGPT');
-        return await chatGPTService.getResponse(message);
+        const chatGPTResponse = await chatGPTService.getResponse(message);
+        return {
+            content: chatGPTResponse,
+            options: []
+        };
     }
 };
 
