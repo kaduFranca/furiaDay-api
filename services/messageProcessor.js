@@ -4,56 +4,24 @@ const messageProcessor = {
     // Mapeamento de palavras-chave para funções
     keywordMap: {
         'opções': 'handleOpcoes',
-        'hoje': 'handleHoje',
-        'jogo': 'handleJogo',
-        'time': 'handleTime',
-        'equipe': 'handleTime',
-        'jogador': 'handleJogador',
-        'partida': 'handlePartida'
+        'Calendário de Jogos': 'handleCalendario',
     },
 
     handleOpcoes: function() {
         return {
-            content: 'O que você quer saber sobre a FURIA?',
+            content: 'O que você quer saber sobre a FURIA CS?',
             options: ['hoje', 'jogo', 'time', 'equipe', 'jogador', 'partida']
         };
     },
 
     // Funções mock para cada palavra-chave
-    handleHoje: function() {
+    handleCalendario: function() {
         return {
-            content: 'furia hoje',
-            options: []
+            content: '📅 Calendário de Jogos',
+            options: ['⚔️ Próximas partidas', '⏪ Partidas passadas', '🏆 Próximos campeonatos', '🏆 Campeonatos passados']
         };
     },
 
-    handleJogo: function() {
-        return {
-            content: 'furia jogo',
-            options: []
-        };
-    },
-
-    handleTime: function() {
-        return {
-            content: 'furia time',
-            options: []
-        };
-    },
-
-    handleJogador: function() {
-        return {
-            content: 'furia jogador',
-            options: []
-        };
-    },
-
-    handlePartida: function() {
-        return {
-            content: 'furia partida',
-            options: []
-        };
-    },
 
     // Função principal para processar a mensagem
     async processMessage(message) {
