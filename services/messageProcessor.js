@@ -1,3 +1,5 @@
+const chatGPTService = require('./chatGPTService');
+
 const messageProcessor = {
     // Mapeamento de palavras-chave para funções
     keywordMap: {
@@ -31,7 +33,7 @@ const messageProcessor = {
     },
 
     // Função principal para processar a mensagem
-    processMessage: function(message) {
+    processMessage: async function(message) {
         console.log('Mensagem recebida no processMessage:', message);
         
         if (!message) {
@@ -58,9 +60,9 @@ const messageProcessor = {
             }
         }
 
-        // Resposta padrão caso nenhuma palavra-chave seja encontrada
-        console.log('Nenhuma palavra-chave encontrada');
-        return 'Desculpe, não entendi sua mensagem. Você pode perguntar sobre a FURIA, jogos, time, jogadores ou partidas.';
+        // Se nenhuma palavra-chave for encontrada, usa o ChatGPT
+        console.log('Nenhuma palavra-chave encontrada, usando ChatGPT');
+        return await chatGPTService.getResponse(message);
     }
 };
 
