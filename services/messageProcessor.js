@@ -10,7 +10,7 @@ const messageProcessor = {
     handleOpcoes: function() {
         return {
             content: 'O que você quer saber sobre a FURIA CS?',
-            options: ['hoje', 'jogo', 'time', 'equipe', 'jogador', 'partida']
+            options: ['📅 Calendário de Jogos']
         };
     },
 
