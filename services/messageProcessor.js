@@ -4,7 +4,7 @@ const messageProcessor = {
     // Mapeamento de palavras-chave para funções
     keywordMap: {
         'opções': 'handleOpcoes',
-        'Calendário de Jogos': 'handleCalendario',
+        '📅 Calendário de Jogos': 'handleCalendario',
     },
 
     handleOpcoes: function() {
