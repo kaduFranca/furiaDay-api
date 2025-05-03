@@ -30,7 +30,7 @@ class ChatGPTService {
             return completion.choices[0].message.content;
         } catch (error) {
             console.error('Erro ao obter resposta do ChatGPT:', error);
-            return 'Desculpe, tive um problema ao processar sua pergunta. Por favor, tente novamente mais tarde.';
+            return 'Desculpe, tivemos um problema com a nossa IA interna.';
         }
     }
 }
