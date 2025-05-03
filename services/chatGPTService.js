@@ -6,7 +6,7 @@ class ChatGPTService {
         this.openai = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
-        this.maxTokens = 150; // Limite padrão de tokens
+        this.maxTokens = 150;
     }
 
     async getResponse(message, maxTokens = this.maxTokens) {

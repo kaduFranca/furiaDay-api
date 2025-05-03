@@ -3,12 +3,20 @@ const chatGPTService = require('./chatGPTService');
 const messageProcessor = {
     // Mapeamento de palavras-chave para funções
     keywordMap: {
+        'opções': 'handleOpcoes',
         'hoje': 'handleHoje',
         'jogo': 'handleJogo',
         'time': 'handleTime',
         'equipe': 'handleTime',
         'jogador': 'handleJogador',
         'partida': 'handlePartida'
+    },
+
+    handleOpcoes: function() {
+        return {
+            content: 'O que você quer saber sobre a FURIA?',
+            options: ['hoje', 'jogo', 'time', 'equipe', 'jogador', 'partida']
+        };
     },
 
     // Funções mock para cada palavra-chave
