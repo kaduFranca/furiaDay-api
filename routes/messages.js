@@ -1,3 +1,5 @@
+const express = require('express');
+const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
 const messageProcessor = require('../services/messageProcessor');
 
@@ -7,27 +9,11 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsdmJsa3NneXZjemR0eGN0c3BqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NTg4Mzc1OCwiZXhwIjoyMDYxNDU5NzU4fQ.34ORfCD6xjoNW1PnjHyIU8sZrGpoW9c6eZkvZLCU4OE'
 );
 
-module.exports = async (req, res) => {
+// Rota para criar uma nova mensagem
+router.post('/', async (req, res) => {
   console.log('Request method:', req.method);
   console.log('Request body:', req.body);
 
-  // Tratamento explícito para OPTIONS
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  switch (req.method) {
-    case 'POST':
-      return await handlePost(req, res);
-    case 'GET':
-      return await handleGet(res);
-    default:
-      return res.status(405).json({ error: 'Método não permitido' });
-  }
-};
-
-async function handlePost(req, res) {
   const { content, timestamp, options, userId } = req.body;
 
   if (!content || typeof content !== 'string') {
@@ -77,9 +63,10 @@ async function handlePost(req, res) {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+});
 
-async function handleGet(res) {
+// Rota para buscar todas as mensagens
+router.get('/', async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('messages')
@@ -115,4 +102,6 @@ async function handleGet(res) {
     console.error('Erro geral:', error);
     return res.status(500).json({ error: error.message });
   }
-}
+});
+
+module.exports = router;
