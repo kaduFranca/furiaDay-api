@@ -45,7 +45,7 @@ const messageProcessor = {
     handleCalendario: function() {
         return {
             content: '📅 Calendário de Jogos',
-            options: ['⚔️ Próximos jogos', '📜 Partidas passadas', '🏆 Campeonatos', '🏅 Campeonatos passados']
+            options: ['⚔️ Próximos jogos', '📜 Partidas passadas']
         };
     },
 
