@@ -21,20 +21,17 @@ const liquipediaScraper = {
                 
                 // Verifica se a linha tem colunas suficientes
                 if (cols.length >= 7) {
-                    const date = $(cols[0]).text().trim();
-                    const tier = $(cols[1]).text().trim();
-                    const matchType = $(cols[2]).text().trim();
+                    const dateText = $(cols[0]).text().trim();
+                    const timestamp = new Date(dateText.split(' - ')[0]).toISOString();
                     const event = $(cols[5]).text().trim();
                     const team1 = $(cols[6]).text().trim();
-                    const score = $(cols[7]).text().trim();
+                    const score = $(cols[7]).text().trim(); 
                     const team2 = $(cols[8]).text().trim();
 
                     // Adiciona o objeto à lista de partidas
-                    if (date && team1 && team2) {
+                    if (timestamp && team1 && team2) {
                         matches.push({
-                            date,
-                            tier,
-                            matchType,
+                            timestamp,
                             event,
                             team1,
                             score,
