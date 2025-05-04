@@ -36,7 +36,7 @@ const messageProcessor = {
     handleFuria: function() {
         return {
             content: 'De qual FURIA estamos falando? 🤔',
-            options: ['🐾 FURIA Ma', '🎯 FURIA Fe', '🎓 FURIA Academy']
+            options: ['⚫ FURIA Ma', '⚪ FURIA Fe', '🟡 FURIA Academy']
         };
     },
 
