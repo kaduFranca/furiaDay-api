@@ -114,8 +114,15 @@ const userService = {
                 return null;
             }
 
-            // Retorna o primeiro usuário encontrado
-            return users[0];
+            // Define FURIA Ma como time padrão se selected_team for null
+            const user = users[0];
+            if (!user.selected_team) {
+                user.selected_team = 'FURIA Ma';
+                // Atualiza o usuário no banco
+                await this.updateUserTeam(user.id, 'FURIA Ma');
+            }
+
+            return user;
         } catch (error) {
             console.error('Erro ao verificar credenciais:', error);
             throw error;
