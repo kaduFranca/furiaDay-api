@@ -2,12 +2,21 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const moment = require('moment');
 
-const LIQUIPEDIA_URL = 'https://liquipedia.net/counterstrike/FURIA/Matches';
+const LIQUIPEDIA_URLS = {
+    'FURIA Ma': 'https://liquipedia.net/counterstrike/FURIA/Matches',
+    'FURIA Fe': 'https://liquipedia.net/counterstrike/FURIA_Female/Matches',
+    'FURIA Academy': 'https://liquipedia.net/counterstrike/FURIA_Academy/Matches'
+};
 
 const liquipediaScraper = {
-    async getTeamData() {
+    async getTeamData(team) {
         try {
-            const { data } = await axios.get(LIQUIPEDIA_URL, {
+            const url = LIQUIPEDIA_URLS[team];
+            if (!url) {
+                throw new Error('Time não encontrado');
+            }
+
+            const { data } = await axios.get(url, {
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
                 }
