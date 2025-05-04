@@ -81,16 +81,18 @@ const messageProcessor = {
                 };
             }
 
-            // Formata a mensagem com os próximos jogos
+            // Formata a mensagem com os próximos jogos, cada informação em uma linha
             const mensagem = proximosJogos.map(jogo => {
                 const data = new Date(jogo.timestamp).toLocaleDateString('pt-BR', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',
+                });
+                const hora = new Date(jogo.timestamp).toLocaleTimeString('pt-BR', {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                return `📅 ${data} - ${jogo.event}\n${jogo.team1} vs ${jogo.team2}`;
+                return `📅 ${data}, ${hora}\n🏆 ${jogo.event}\n${jogo.team1} vs ${jogo.team2}`;
             }).join('\n\n');
 
             return {
@@ -127,16 +129,18 @@ const messageProcessor = {
                 };
             }
 
-            // Formata a mensagem com as partidas passadas
+            // Formata a mensagem com as partidas passadas, cada informação em uma linha
             const mensagem = partidasPassadas.map(jogo => {
                 const data = new Date(jogo.timestamp).toLocaleDateString('pt-BR', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',
+                });
+                const hora = new Date(jogo.timestamp).toLocaleTimeString('pt-BR', {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                return `📅 ${data} - ${jogo.event}\n${jogo.team1} ${jogo.score} ${jogo.team2}`;
+                return `📅 ${data}, ${hora}\n🏆 ${jogo.event}\n${jogo.team1} ${jogo.score} ${jogo.team2}`;
             }).join('\n\n');
 
             return {
