@@ -114,11 +114,16 @@ const userService = {
                 return null;
             }
 
-            // Define FURIA Ma como time padrão se selected_team for null
             const user = users[0];
+            
+            // Se o selected_team for null, define como FURIA Ma
             if (!user.selected_team) {
                 user.selected_team = 'FURIA Ma';
-                // Atualiza o usuário no banco
+                await this.updateUserTeam(user.id, 'FURIA Ma');
+            } 
+            // Se o selected_team for diferente de FURIA Ma, atualiza para FURIA Ma
+            else if (user.selected_team !== 'FURIA Ma') {
+                user.selected_team = 'FURIA Ma';
                 await this.updateUserTeam(user.id, 'FURIA Ma');
             }
 
