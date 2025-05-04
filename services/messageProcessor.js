@@ -1,4 +1,5 @@
 const chatGPTService = require('./chatGPTService');
+const liquipediaScraper = require('./liquipediaScraper');
 
 const messageProcessor = {
 
@@ -20,7 +21,7 @@ const messageProcessor = {
 
     handleOpcoes: function() {
         return {
-            content: `O que você quer saber sobre a ${this.selectedTeam}?`,
+            content: `O que você quer saber sobre a FURIA?`,
             options: ['📅 Calendário de Jogos']
         };
     },
@@ -35,7 +36,7 @@ const messageProcessor = {
     handleFuria: function() {
         return {
             content: 'De qual FURIA estamos falando? 🤔',
-            options: ['[furiaMa] FURIA Ma', '[furiaFe] FURIA Fe', '[furiaAcademy] FURIA Academy']
+            options: ['🐾 FURIA Ma', '🎯 FURIA Fe', '🎓 FURIA Academy']
         };
     },
 
@@ -59,6 +60,49 @@ const messageProcessor = {
         return {
             content: 'time selecionado',
         };
+    },
+
+    handleProximosJogos: async function() {
+        try {
+            const matches = await liquipediaScraper.getTeamData();
+            const hoje = new Date();
+            
+            // Filtra apenas os jogos futuros
+            const proximosJogos = matches.filter(match => {
+                const dataJogo = new Date(match.timestamp);
+                return dataJogo > hoje;
+            });
+
+            if (proximosJogos.length === 0) {
+                return {
+                    content: 'Não há jogos marcados para o futuro próximo.',
+                    options: []
+                };
+            }
+
+            // Formata a mensagem com os próximos jogos
+            const mensagem = proximosJogos.map(jogo => {
+                const data = new Date(jogo.timestamp).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                return `📅 ${data} - ${jogo.event}\n${jogo.team1} vs ${jogo.team2}`;
+            }).join('\n\n');
+
+            return {
+                content: `Próximos jogos:\n\n${mensagem}`,
+                options: []
+            };
+        } catch (error) {
+            console.error('Erro ao buscar próximos jogos:', error);
+            return {
+                content: 'Desculpe, não foi possível buscar os próximos jogos no momento.',
+                options: []
+            };
+        }
     },
 
     // Função principal para processar a mensagem
