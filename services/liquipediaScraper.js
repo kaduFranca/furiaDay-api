@@ -22,7 +22,7 @@ const liquipediaScraper = {
                 // Verifica se a linha tem colunas suficientes
                 if (cols.length >= 7) {
                     const dateText = $(cols[0]).text().trim();
-                    const timestamp = new Date(dateText.split(' - ')[0]).toISOString();
+                    const timestamp = convertLiquipediaDate(dateText);
                     const event = $(cols[5]).text().trim();
                     const team1 = $(cols[6]).text().trim();
                     const score = $(cols[7]).text().trim(); 
@@ -47,6 +47,23 @@ const liquipediaScraper = {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
             throw new Error('Não foi possível obter os dados da FURIA na Liquipedia');
         }
+    }
+};
+
+// Função para converter a data do formato Liquipedia para ISO
+const convertLiquipediaDate = (dateStr) => {
+    try {
+        // Remove o fuso horário BRT e converte para UTC
+        const dateWithoutTZ = dateStr.replace(' BRT', '');
+        const date = new Date(dateWithoutTZ);
+        
+        // Adiciona 3 horas para compensar o BRT (UTC-3)
+        date.setHours(date.getHours() + 3);
+        
+        return date.toISOString();
+    } catch (error) {
+        console.error('Erro ao converter data:', dateStr, error);
+        return null;
     }
 };
 
