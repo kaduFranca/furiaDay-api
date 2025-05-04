@@ -13,24 +13,28 @@ const liquipediaScraper = {
             });
             const $ = cheerio.load(data);
 
-            // Encontrar a tabela de partidas recentes
-            const matches = [];
-            $('#mw-content-text > div > div:nth-child(2) > div:nth-child(2) > table > tbody > tr').each((i, element) => {
-                const match = {
-                    team1: $(element).find('td:nth-child(7) > div > span:nth-child(2) > a').text().trim(),
-                    team2: $(element).find('td:nth-child(9) > div > span:nth-child(2) > a').text().trim(),
-                    score: $(element).find('td:nth-child(8)').text().trim(),
-                    event: $(element).find('td:nth-child(6) > a').text().trim()
+            // Encontrar a tabela específica
+            const tableContent = [];
+            $('table.wikitable.wikitable-striped.sortable.jquery-tablesorter tbody tr').each((i, element) => {
+                const row = {
+                    rawHtml: $(element).html(),
+                    text: $(element).text(),
+                    cells: []
                 };
-                
-                // Só adiciona se tiver pelo menos um time
-                if (match.team1 || match.team2) {
-                    matches.push(match);
-                }
+
+                // Capturar o conteúdo de cada célula
+                $(element).find('td').each((j, cell) => {
+                    row.cells.push({
+                        html: $(cell).html(),
+                        text: $(cell).text().trim()
+                    });
+                });
+
+                tableContent.push(row);
             });
 
             return {
-                matches
+                tableContent
             };
         } catch (error) {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
