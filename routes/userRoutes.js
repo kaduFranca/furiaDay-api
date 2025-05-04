@@ -66,4 +66,41 @@ router.get('/:username', async (req, res) => {
     }
 });
 
+// Rota para login
+router.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        
+        if (!username || !password) {
+            return res.status(400).json({ 
+                error: 'Nome de usuário e senha são obrigatórios' 
+            });
+        }
+
+        const user = await userService.verifyCredentials(username, password);
+        
+        if (!user) {
+            return res.status(401).json({ 
+                error: 'Credenciais inválidas' 
+            });
+        }
+
+        // Retorna os dados do usuário (sem a senha) para o frontend
+        res.json({
+            message: 'Login realizado com sucesso',
+            user: {
+                id: user.id,
+                username: user.username,
+                selected_team: user.selected_team
+            }
+        });
+    } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        res.status(500).json({ 
+            error: 'Erro ao fazer login',
+            details: error.message 
+        });
+    }
+});
+
 module.exports = router; 

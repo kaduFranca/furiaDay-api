@@ -90,6 +90,31 @@ const userService = {
             console.error('Erro detalhado ao atualizar time:', error.stack);
             throw new Error(`Erro ao atualizar time: ${error.message}`);
         }
+    },
+
+    async verifyCredentials(username, password) {
+        try {
+            console.log('Verificando credenciais para:', username);
+            
+            const { data: user, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('username', username)
+                .eq('password', password)
+                .single();
+
+            if (error) {
+                if (error.code === 'PGRST116') { // Não encontrado
+                    return null;
+                }
+                throw new Error(`Erro ao verificar credenciais: ${error.message}`);
+            }
+
+            return user;
+        } catch (error) {
+            console.error('Erro ao verificar credenciais:', error);
+            throw error;
+        }
     }
 };
 
