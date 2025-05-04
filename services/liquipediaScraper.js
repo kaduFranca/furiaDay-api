@@ -13,28 +13,11 @@ const liquipediaScraper = {
             });
             const $ = cheerio.load(data);
 
-            // Encontrar a tabela específica
-            const tableContent = [];
-            $('table.wikitable.wikitable-striped.sortable.jquery-tablesorter tbody tr').each((i, element) => {
-                const row = {
-                    rawHtml: $(element).html(),
-                    text: $(element).text(),
-                    cells: []
-                };
-
-                // Capturar o conteúdo de cada célula
-                $(element).find('td').each((j, cell) => {
-                    row.cells.push({
-                        html: $(cell).html(),
-                        text: $(cell).text().trim()
-                    });
-                });
-
-                tableContent.push(row);
-            });
+            // Buscar o elemento com ID firstHeading
+            const firstHeading = $('#firstHeading').text().trim();
 
             return {
-                tableContent
+                firstHeading
             };
         } catch (error) {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
