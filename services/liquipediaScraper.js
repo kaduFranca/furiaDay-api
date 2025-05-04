@@ -62,8 +62,8 @@ const liquipediaScraper = {
 
             console.log('Partidas depois da ordenação:', sortedMatches.map(m => m.timestamp));
 
-            // Retorna as 10 mais recentes
-            return sortedMatches.slice(0, 10);
+            // Retorna as 5 mais recentes
+            return sortedMatches.slice(0, 5);
         } catch (error) {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
             throw new Error('Não foi possível obter os dados da FURIA na Liquipedia');
