@@ -15,13 +15,12 @@ const liquipediaScraper = {
 
             // Encontrar a tabela de partidas recentes
             const matches = [];
-            $('tr[class*="recent-matches-bg-"]').each((i, element) => {
+            $('#mw-content-text > div > div:nth-child(2) > div:nth-child(2) > table > tbody > tr').each((i, element) => {
                 const match = {
-                    team1: $(element).find('td:nth-child(7) .block-team.flipped .name a').text().trim(),
-                    team2: $(element).find('td:nth-child(9) .block-team .name a').text().trim(),
-                    score: $(element).find('.match-table-score').text().trim(),
-                    event: $(element).find('td:nth-child(6) a').text().trim(),
-                    matchLink: $(element).find('.plainlinks.vodlink a').first().attr('href') || ''
+                    team1: $(element).find('td:nth-child(7) > div > span:nth-child(2) > a').text().trim(),
+                    team2: $(element).find('td:nth-child(9) > div > span:nth-child(2) > a').text().trim(),
+                    score: $(element).find('td:nth-child(8)').text().trim(),
+                    event: $(element).find('td:nth-child(6) > a').text().trim()
                 };
                 
                 // Só adiciona se tiver pelo menos um time
