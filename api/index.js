@@ -12,6 +12,7 @@ const allowedOrigins = [
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
+    console.log('Origin:', origin);
     
     // Verifica se a origem está na lista de domínios permitidos
     if (allowedOrigins.some(allowedOrigin => {
@@ -27,9 +28,11 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Max-Age', '86400'); // 24 horas
     
     // Responde imediatamente para requisições OPTIONS
     if (req.method === 'OPTIONS') {
+        console.log('OPTIONS request received');
         return res.status(200).end();
     }
     

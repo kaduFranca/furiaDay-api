@@ -12,3 +12,4 @@ yarn-error.log
 # Ignorar diretórios de build (se tiver)
 dist/
 build/
+.vercel

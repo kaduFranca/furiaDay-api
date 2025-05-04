@@ -11,6 +11,12 @@ module.exports = async (req, res) => {
   console.log('Request method:', req.method);
   console.log('Request body:', req.body);
 
+  // Tratamento explícito para OPTIONS
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   switch (req.method) {
     case 'POST':
       return await handlePost(req, res);
