@@ -7,12 +7,8 @@ const messageProcessor = {
 
     // Mapeamento de palavras-chave para funções
     keywordMap: {
-        'opcoes': 'handleFuria',
-        'time selecionado': 'handleOpcoes',
+        'opcoes': 'handleOpcoes',
         'calendario': 'handleCalendario',
-        'furia ma': 'handleOpcoes',
-        'furia fe': 'handleOpcoes',
-        'furia academy': 'handleOpcoes',
         'proximos jogos': 'handleProximosJogos',
         'partidas passadas': 'handlePartidasPassadas',
         'campeonatos': 'handleCampeonatos',
@@ -59,27 +55,6 @@ const messageProcessor = {
         return {
             content: 'De qual FURIA estamos falando? 🤔',
             options: ['⚫ FURIA Ma', '⚪ FURIA Fe', '🟡 FURIA Academy']
-        };
-    },
-
-    handleFuriaMa: async function(userId) {
-        await this.saveSelectedTeam(userId, 'FURIA Ma');
-        return {
-            content: 'time selecionado',
-        };
-    },
-
-    handleFuriaFe: async function(userId) {
-        await this.saveSelectedTeam(userId, 'FURIA Fe');
-        return {
-            content: 'time selecionado',
-        };
-    },
-
-    handleFuriaAcademy: async function(userId) {
-        await this.saveSelectedTeam(userId, 'FURIA Academy');
-        return {
-            content: 'time selecionado',
         };
     },
 
