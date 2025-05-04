@@ -41,8 +41,10 @@ const liquipediaScraper = {
                 }
             });
 
-            // Retorna apenas as 10 partidas mais recentes
-            return matches.slice(0, 10);
+            // Ordena as partidas por data (mais recentes primeiro) e retorna as 10 mais recentes
+            return matches
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 10);
         } catch (error) {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
             throw new Error('Não foi possível obter os dados da FURIA na Liquipedia');
