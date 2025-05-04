@@ -106,6 +106,52 @@ const messageProcessor = {
         }
     },
 
+    handlePartidasPassadas: async function() {
+        try {
+            const team = this.selectedTeam || 'FURIA Ma';
+            const matches = await liquipediaScraper.getTeamData(team);
+            const hoje = new Date();
+            
+            // Filtra apenas os jogos passados e pega as 5 mais recentes
+            const partidasPassadas = matches
+                .filter(match => {
+                    const dataJogo = new Date(match.timestamp);
+                    return dataJogo <= hoje;
+                })
+                .slice(0, 5); // Pega apenas as 5 mais recentes
+
+            if (partidasPassadas.length === 0) {
+                return {
+                    content: `Não há partidas passadas registradas para a ${team}.`,
+                    options: []
+                };
+            }
+
+            // Formata a mensagem com as partidas passadas
+            const mensagem = partidasPassadas.map(jogo => {
+                const data = new Date(jogo.timestamp).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                return `📅 ${data} - ${jogo.event}\n${jogo.team1} ${jogo.score} ${jogo.team2}`;
+            }).join('\n\n');
+
+            return {
+                content: `Últimas 5 partidas da ${team}:\n\n${mensagem}`,
+                options: []
+            };
+        } catch (error) {
+            console.error('Erro ao buscar partidas passadas:', error);
+            return {
+                content: 'Desculpe, não foi possível buscar as partidas passadas no momento.',
+                options: []
+            };
+        }
+    },
+
     // Função principal para processar a mensagem
     async processMessage(message) {
         console.log('Mensagem recebida no processMessage:', message);
