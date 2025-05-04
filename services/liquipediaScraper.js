@@ -65,12 +65,41 @@ const liquipediaScraper = {
 const convertLiquipediaDate = (dateStr) => {
     try {
         console.log('Convertendo data:', dateStr);
-        // Remove o fuso horário BRT e converte para UTC
-        const dateWithoutTZ = dateStr.replace(' BRT', '').replace(' EEST', '');
-        const date = new Date(dateWithoutTZ);
         
-        // Adiciona 3 horas para compensar o BRT (UTC-3)
-        date.setHours(date.getHours() + 3);
+        // Remove o fuso horário e converte para UTC
+        const dateWithoutTZ = dateStr
+            .replace(' BRT', '')
+            .replace(' EEST', '')
+            .replace(' CET', '')
+            .replace(' CEST', '')
+            .replace(' UTC', '');
+        
+        // Converte o mês abreviado para o formato completo
+        const months = {
+            'Jan': 'January',
+            'Feb': 'February',
+            'Mar': 'March',
+            'Apr': 'April',
+            'May': 'May',
+            'Jun': 'June',
+            'Jul': 'July',
+            'Aug': 'August',
+            'Sep': 'September',
+            'Oct': 'October',
+            'Nov': 'November',
+            'Dec': 'December'
+        };
+        
+        let formattedDate = dateWithoutTZ;
+        for (const [abbr, full] of Object.entries(months)) {
+            if (dateWithoutTZ.includes(abbr)) {
+                formattedDate = dateWithoutTZ.replace(abbr, full);
+                break;
+            }
+        }
+        
+        const date = new Date(formattedDate);
+        console.log('Data convertida:', date);
         
         return date.toISOString();
     } catch (error) {
