@@ -66,21 +66,21 @@ const messageProcessor = {
     handleOpcoes: function() {
         return {
             content: `O que você quer saber sobre a FURIA?`,
-            options: ['📅 Calendário de Jogos']
+            options: [
+                { text: '📅 Calendário de Jogos' },
+                { text: '😎 Compre a sua Jersey', link: 'https://www.furia.gg/shop' },
+                { text: '📸 Instagram', link: 'https://www.instagram.com/furia' }
+            ]
         };
     },
 
     handleCalendario: function() {
         return {
             content: '📅 Calendário de Jogos',
-            options: ['⚔️ Próximos jogos', '📜 Partidas passadas']
-        };
-    },
-
-    handleFuria: function() {
-        return {
-            content: 'De qual FURIA estamos falando? 🤔',
-            options: ['⚫ FURIA Ma', '⚪ FURIA Fe', '🟡 FURIA Academy']
+            options: [
+                { text: '⚔️ Próximos jogos' },
+                { text: '📜 Partidas passadas' }
+            ]
         };
     },
 
