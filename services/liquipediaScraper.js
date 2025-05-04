@@ -15,16 +15,17 @@ const liquipediaScraper = {
 
             // Encontrar a tabela de partidas recentes
             const matches = [];
-            $('table.wikitable tbody tr').each((i, element) => {
-                // Verificar se é uma linha de partida (ignorar cabeçalhos e outras linhas)
-                if ($(element).find('.match-table-score').length > 0) {
-                    const match = {
-                        team1: $(element).find('td:nth-child(7) .name a').text().trim(),
-                        team2: $(element).find('td:nth-child(9) .name a').text().trim(),
-                        score: $(element).find('.match-table-score').text().trim(),
-                        event: $(element).find('td:nth-child(6) a').text().trim(),
-                        matchLink: $(element).find('.plainlinks.vodlink a').first().attr('href') || ''
-                    };
+            $('tr[class*="recent-matches-bg-"]').each((i, element) => {
+                const match = {
+                    team1: $(element).find('td:nth-child(7) .block-team.flipped .name a').text().trim(),
+                    team2: $(element).find('td:nth-child(9) .block-team .name a').text().trim(),
+                    score: $(element).find('.match-table-score').text().trim(),
+                    event: $(element).find('td:nth-child(6) a').text().trim(),
+                    matchLink: $(element).find('.plainlinks.vodlink a').first().attr('href') || ''
+                };
+                
+                // Só adiciona se tiver pelo menos um time
+                if (match.team1 || match.team2) {
                     matches.push(match);
                 }
             });
