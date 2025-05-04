@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const LIQUIPEDIA_URL = 'https://liquipedia.net/counterstrike/FURIA';
+const LIQUIPEDIA_URL = 'https://liquipedia.net/counterstrike/FURIA/Matches';
 
 const liquipediaScraper = {
     async getTeamData() {
