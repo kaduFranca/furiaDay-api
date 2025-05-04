@@ -1,9 +1,8 @@
 const chatGPTService = require('./chatGPTService');
 const liquipediaScraper = require('./liquipediaScraper');
+const supabase = require('../supabase/client');
 
 const messageProcessor = {
-
-    selectedTeam: null,
 
     // Mapeamento de palavras-chave para funções
     keywordMap: {
@@ -17,6 +16,42 @@ const messageProcessor = {
         'partidas passadas': 'handlePartidasPassadas',
         'campeonatos': 'handleCampeonatos',
         'campeonatos passados': 'handleCampeonatosPassados'
+    },
+
+    // Função para salvar o time selecionado no banco de dados
+    async saveSelectedTeam(userId, team) {
+        try {
+            const { data, error } = await supabase
+                .from('user_preferences')
+                .upsert({
+                    user_id: userId,
+                    selected_team: team,
+                    updated_at: new Date().toISOString()
+                });
+
+            if (error) throw error;
+            return true;
+        } catch (error) {
+            console.error('Erro ao salvar time selecionado:', error);
+            return false;
+        }
+    },
+
+    // Função para recuperar o time selecionado do banco de dados
+    async getSelectedTeam(userId) {
+        try {
+            const { data, error } = await supabase
+                .from('user_preferences')
+                .select('selected_team')
+                .eq('user_id', userId)
+                .single();
+
+            if (error) throw error;
+            return data?.selected_team || 'FURIA Ma';
+        } catch (error) {
+            console.error('Erro ao recuperar time selecionado:', error);
+            return 'FURIA Ma';
+        }
     },
 
     handleOpcoes: function() {
@@ -40,31 +75,30 @@ const messageProcessor = {
         };
     },
 
-    handleFuriaMa: function() {
-        this.selectedTeam = 'FURIA Ma';
-        return {
-            content: 'time selecionado',
-
-        };
-    },
-
-    handleFuriaFe: function() {
-        this.selectedTeam = 'FURIA Fe';
+    handleFuriaMa: async function(userId) {
+        await this.saveSelectedTeam(userId, 'FURIA Ma');
         return {
             content: 'time selecionado',
         };
     },
 
-    handleFuriaAcademy: function() {
-        this.selectedTeam = 'FURIA Academy';
+    handleFuriaFe: async function(userId) {
+        await this.saveSelectedTeam(userId, 'FURIA Fe');
         return {
             content: 'time selecionado',
         };
     },
 
-    handleProximosJogos: async function() {
+    handleFuriaAcademy: async function(userId) {
+        await this.saveSelectedTeam(userId, 'FURIA Academy');
+        return {
+            content: 'time selecionado',
+        };
+    },
+
+    handleProximosJogos: async function(userId) {
         try {
-            const team = this.selectedTeam || 'FURIA Ma';
+            const team = await this.getSelectedTeam(userId);
             const matches = await liquipediaScraper.getTeamData(team);
             const hoje = new Date();
             
@@ -108,56 +142,8 @@ const messageProcessor = {
         }
     },
 
-    handlePartidasPassadas: async function() {
-        try {
-            const team = this.selectedTeam || 'FURIA Ma';
-            const matches = await liquipediaScraper.getTeamData(team);
-            const hoje = new Date();
-            
-            // Filtra apenas os jogos passados e pega as 5 mais recentes
-            const partidasPassadas = matches
-                .filter(match => {
-                    const dataJogo = new Date(match.timestamp);
-                    return dataJogo <= hoje;
-                })
-                .slice(0, 5); // Pega apenas as 5 mais recentes
-
-            if (partidasPassadas.length === 0) {
-                return {
-                    content: `Não há partidas passadas registradas para a ${team}.`,
-                    options: []
-                };
-            }
-
-            // Formata a mensagem com as partidas passadas, cada informação em uma linha
-            const mensagem = partidasPassadas.map(jogo => {
-                const data = new Date(jogo.timestamp).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                });
-                const hora = new Date(jogo.timestamp).toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                return `📅 ${data}, ${hora}\n🏆 ${jogo.event}\n${jogo.team1} ${jogo.score} ${jogo.team2}`;
-            }).join('\n\n');
-
-            return {
-                content: `Últimas 5 partidas da ${team}:\n\n${mensagem}`,
-                options: []
-            };
-        } catch (error) {
-            console.error('Erro ao buscar partidas passadas:', error);
-            return {
-                content: 'Desculpe, não foi possível buscar as partidas passadas no momento.',
-                options: []
-            };
-        }
-    },
-
     // Função principal para processar a mensagem
-    async processMessage(message) {
+    async processMessage(message, userId) {
         console.log('Mensagem recebida no processMessage:', message);
         
         if (!message) {
@@ -184,7 +170,7 @@ const messageProcessor = {
             console.log('Verificando palavra-chave:', keyword);
             if (normalizedMessage.includes(keyword)) {
                 console.log('Palavra-chave encontrada:', keyword);
-                const response = this[handler]();
+                const response = await this[handler](userId);
                 console.log('Resposta gerada:', response);
                 return response;
             }
@@ -208,4 +194,4 @@ const messageProcessor = {
     }
 };
 
-module.exports = messageProcessor; 
+module.exports = messageProcessor;
