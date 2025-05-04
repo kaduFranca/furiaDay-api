@@ -68,8 +68,8 @@ const messageProcessor = {
             content: `O que você quer saber sobre a FURIA?`,
             options: [
                 { text: '📅 Calendário de Jogos' },
-                { text: '😎 Compre a sua Jersey', link: 'https://www.furia.gg/shop' },
-                { text: '📸 Instagram', link: 'https://www.instagram.com/furia' }
+                { text: '😎 Compre a sua Jersey', link: 'https://www.furia.gg' },
+                { text: '📸 Instagram', link: 'https://www.instagram.com/furiagg' }
             ]
         };
     },
