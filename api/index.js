@@ -8,7 +8,7 @@ app.use('/messages', messagesRouter);
 app.use('/liquipedia', liquipediaRouter);
 
 app.get('/', (req, res) => {
-  res.send('1,2,3... FURIA!');
+  res.send('1,2,3... FURIA!!!');
 });
 
 module.exports = app;
