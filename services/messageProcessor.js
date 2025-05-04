@@ -70,7 +70,7 @@ const messageProcessor = {
                 { text: '📅 Calendário de Jogos' },
                 { text: '😎 Compre a sua Jersey', link: 'https://www.furia.gg' },
                 { text: '📸 Instagram', link: 'https://www.instagram.com/furiagg' },
-                { text: '🎥 Youtube', link: 'https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ'}
+                { text: '🎥 Youtube', link: 'https://www.youtube.com/@FURIAggCS'}
             ]
         };
     },

@@ -5,10 +5,34 @@ const liquipediaRouter = require('../routes/liquipediaRoutes');
 const userRouter = require('../routes/userRoutes');
 
 // Configuração CORS
+const allowedOrigins = [
+    'https://furia-day.vercel.app',
+    'https://furia-*.vercel.app'
+];
+
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    const origin = req.headers.origin;
+    
+    // Verifica se a origem está na lista de domínios permitidos
+    if (allowedOrigins.some(allowedOrigin => {
+        if (allowedOrigin.includes('*')) {
+            const regex = new RegExp('^' + allowedOrigin.replace('*', '.*') + '$');
+            return regex.test(origin);
+        }
+        return allowedOrigin === origin;
+    })) {
+        res.header('Access-Control-Allow-Origin', origin);
+    }
+
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    // Responde imediatamente para requisições OPTIONS
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    
     next();
 });
 
