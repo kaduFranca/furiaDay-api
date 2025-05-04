@@ -1,6 +1,7 @@
 const chatGPTService = require('./chatGPTService');
 const liquipediaScraper = require('./liquipediaScraper');
 const supabase = require('../supabase/client');
+const userService = require('./userService');
 
 const messageProcessor = {
 
@@ -21,15 +22,7 @@ const messageProcessor = {
     // Função para salvar o time selecionado no banco de dados
     async saveSelectedTeam(userId, team) {
         try {
-            const { data, error } = await supabase
-                .from('user_preferences')
-                .upsert({
-                    user_id: userId,
-                    selected_team: team,
-                    updated_at: new Date().toISOString()
-                });
-
-            if (error) throw error;
+            await userService.updateUserTeam(userId, team);
             return true;
         } catch (error) {
             console.error('Erro ao salvar time selecionado:', error);
@@ -40,14 +33,8 @@ const messageProcessor = {
     // Função para recuperar o time selecionado do banco de dados
     async getSelectedTeam(userId) {
         try {
-            const { data, error } = await supabase
-                .from('user_preferences')
-                .select('selected_team')
-                .eq('user_id', userId)
-                .single();
-
-            if (error) throw error;
-            return data?.selected_team || 'FURIA Ma';
+            const user = await userService.getUserByUsername(userId);
+            return user?.selected_team || 'FURIA Ma';
         } catch (error) {
             console.error('Erro ao recuperar time selecionado:', error);
             return 'FURIA Ma';
