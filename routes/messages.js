@@ -13,8 +13,22 @@ const supabase = createClient(
 router.post('/', async (req, res) => {
   console.log('Request method:', req.method);
   console.log('Request body:', req.body);
+  console.log('Content-Type:', req.headers['content-type']);
 
-  const { content, timestamp, options, userId } = req.body;
+  let messageData;
+  try {
+    // Se o conteúdo for uma string, tenta parsear como JSON
+    if (typeof req.body === 'string') {
+      messageData = JSON.parse(req.body);
+    } else {
+      messageData = req.body;
+    }
+  } catch (error) {
+    console.error('Erro ao parsear body:', error);
+    return res.status(400).json({ error: 'Formato de mensagem inválido' });
+  }
+
+  const { content, timestamp, options, userId } = messageData;
 
   if (!content || typeof content !== 'string') {
     return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório e deve ser uma string' });

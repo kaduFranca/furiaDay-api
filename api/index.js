@@ -42,7 +42,7 @@ app.use((req, res, next) => {
 
     // Headers CORS
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Referer, User-Agent, Sec-Ch-Ua, Sec-Ch-Ua-Mobile, Sec-Ch-Ua-Platform');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Referer, User-Agent, Sec-Ch-Ua, Sec-Ch-Ua-Mobile, Sec-Ch-Ua-Platform, Cache-Control, Pragma');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Max-Age', '86400'); // 24 horas
     res.header('Access-Control-Expose-Headers', 'Content-Length, Content-Type');
@@ -57,7 +57,9 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware para parsear JSON
 app.use(express.json());
+app.use(express.text()); // Adiciona suporte para text/plain
 
 // Middleware para log de todas as requisições
 app.use((req, res, next) => {
@@ -65,6 +67,7 @@ app.use((req, res, next) => {
     console.log('Method:', req.method);
     console.log('Path:', req.path);
     console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
     next();
 });
 
