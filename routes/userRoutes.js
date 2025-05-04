@@ -69,7 +69,7 @@ router.get('/:username', async (req, res) => {
 // Rota para login
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, selected_team } = req.body;
         
         if (!username || !password) {
             return res.status(400).json({ 
@@ -77,7 +77,7 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        const user = await userService.verifyCredentials(username, password);
+        const user = await userService.verifyCredentials(username, password, selected_team);
         
         if (!user) {
             return res.status(401).json({ 

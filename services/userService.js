@@ -95,7 +95,7 @@ const userService = {
         }
     },
 
-    async verifyCredentials(username, password) {
+    async verifyCredentials(username, password, selected_team) {
         try {
             console.log('Verificando credenciais para:', username);
             
@@ -116,15 +116,10 @@ const userService = {
 
             const user = users[0];
             
-            // Se o selected_team for null, define como FURIA Ma
-            if (!user.selected_team) {
-                user.selected_team = 'FURIA Ma';
-                await this.updateUserTeam(user.id, 'FURIA Ma');
-            } 
-            // Se o selected_team for diferente de FURIA Ma, atualiza para FURIA Ma
-            else if (user.selected_team !== 'FURIA Ma') {
-                user.selected_team = 'FURIA Ma';
-                await this.updateUserTeam(user.id, 'FURIA Ma');
+            // Se o selected_team for null ou diferente do enviado, atualiza
+            if (!user.selected_team || user.selected_team !== selected_team) {
+                user.selected_team = selected_team || 'FURIA Ma';
+                await this.updateUserTeam(user.id, user.selected_team);
             }
 
             return user;
