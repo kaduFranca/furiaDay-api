@@ -41,10 +41,19 @@ const liquipediaScraper = {
                 }
             });
 
-            // Ordena as partidas por data (mais recentes primeiro) e retorna as 10 mais recentes
-            return matches
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .slice(0, 10);
+            console.log('Partidas antes da ordenação:', matches.map(m => m.timestamp));
+
+            // Ordena as partidas por data (mais recentes primeiro)
+            const sortedMatches = matches.sort((a, b) => {
+                const dateA = new Date(a.timestamp);
+                const dateB = new Date(b.timestamp);
+                return dateB - dateA;
+            });
+
+            console.log('Partidas depois da ordenação:', sortedMatches.map(m => m.timestamp));
+
+            // Retorna as 10 mais recentes
+            return sortedMatches.slice(0, 10);
         } catch (error) {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
             throw new Error('Não foi possível obter os dados da FURIA na Liquipedia');
@@ -55,8 +64,9 @@ const liquipediaScraper = {
 // Função para converter a data do formato Liquipedia para ISO
 const convertLiquipediaDate = (dateStr) => {
     try {
+        console.log('Convertendo data:', dateStr);
         // Remove o fuso horário BRT e converte para UTC
-        const dateWithoutTZ = dateStr.replace(' BRT', '');
+        const dateWithoutTZ = dateStr.replace(' BRT', '').replace(' EEST', '');
         const date = new Date(dateWithoutTZ);
         
         // Adiciona 3 horas para compensar o BRT (UTC-3)
