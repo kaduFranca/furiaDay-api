@@ -1,15 +1,26 @@
 const chatGPTService = require('./chatGPTService');
 
 const messageProcessor = {
+
+    selectedTeam: null,
+
     // Mapeamento de palavras-chave para funções
     keywordMap: {
-        'opcoes': 'handleOpcoes',
-        'calendario': 'handleCalendario'
+        'opcoes': 'handleFuria',
+        'time selecionado': 'handleOpcoes',
+        'calendario': 'handleCalendario',
+        'furia ma': 'handleFuriaMa',
+        'furia fe': 'handleFuriaFe',
+        'furia academy': 'handleFuriaAcademy',
+        'proximos jogos': 'handleProximosJogos',
+        'partidas passadas': 'handlePartidasPassadas',
+        'campeonatos': 'handleCampeonatos',
+        'campeonatos passados': 'handleCampeonatosPassados'
     },
 
     handleOpcoes: function() {
         return {
-            content: 'O que você quer saber sobre a FURIA CS?',
+            content: `O que você quer saber sobre a ${this.selectedTeam}?`,
             options: ['📅 Calendário de Jogos']
         };
     },
@@ -17,7 +28,36 @@ const messageProcessor = {
     handleCalendario: function() {
         return {
             content: '📅 Calendário de Jogos',
-            options: ['⚔️ Próximas partidas', '⏪ Partidas passadas', '🏆 Próximos campeonatos', '🏆 Campeonatos passados']
+            options: ['⚔️ Próximos jogos', '📜 Partidas passadas', '🏆 Campeonatos', '🏅 Campeonatos passados']
+        };
+    },
+
+    handleFuria: function() {
+        return {
+            content: 'De qual FURIA estamos falando? 🤔',
+            options: ['[furiaMa] FURIA Ma', '[furiaFe] FURIA Fe', '[furiaAcademy] FURIA Academy']
+        };
+    },
+
+    handleFuriaMa: function() {
+        this.selectedTeam = 'FURIA Ma';
+        return {
+            content: 'time selecionado',
+
+        };
+    },
+
+    handleFuriaFe: function() {
+        this.selectedTeam = 'FURIA Fe';
+        return {
+            content: 'time selecionado',
+        };
+    },
+
+    handleFuriaAcademy: function() {
+        this.selectedTeam = 'FURIA Academy';
+        return {
+            content: 'time selecionado',
         };
     },
 
