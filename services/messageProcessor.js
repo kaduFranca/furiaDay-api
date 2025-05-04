@@ -48,9 +48,12 @@ const messageProcessor = {
             
             // Converte o nome do time para o formato correto
             const team = user.selected_team || 'FURIA Ma';
-            const formattedTeam = team.split(' ').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-            ).join(' ');
+            const formattedTeam = team.split(' ').map((word, index) => {
+                if (index === 0) {
+                    return 'FURIA'; // Sempre mantém FURIA em maiúsculas
+                }
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }).join(' ');
             
             console.log('Time formatado:', formattedTeam);
             return formattedTeam;
