@@ -47,19 +47,22 @@ const userService = {
         try {
             console.log('Buscando usuário:', username);
             
-            const { data, error } = await supabase
+            const { data: users, error } = await supabase
                 .from('users')
                 .select('*')
-                .eq('username', username)
-                .single();
+                .eq('username', username);
 
             if (error) {
                 console.error('Erro do Supabase:', JSON.stringify(error, null, 2));
                 throw new Error(`Erro do Supabase: ${error.message || 'Erro desconhecido'}`);
             }
 
-            console.log('Usuário encontrado:', data);
-            return data;
+            if (!users || users.length === 0) {
+                return null;
+            }
+
+            console.log('Usuário encontrado:', users[0]);
+            return users[0];
         } catch (error) {
             console.error('Erro detalhado ao buscar usuário:', error.stack);
             throw new Error(`Erro ao buscar usuário: ${error.message}`);
@@ -120,5 +123,4 @@ const userService = {
     }
 };
 
-module.exports = userService; 
 module.exports = userService; 
