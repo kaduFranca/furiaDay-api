@@ -24,6 +24,13 @@ router.post('/create', async (req, res) => {
         });
     } catch (error) {
         console.error('Erro ao criar usuário:', error);
+        
+        if (error.message === 'Nome de usuário já está em uso') {
+            return res.status(409).json({ 
+                error: 'Nome de usuário já está em uso'
+            });
+        }
+        
         res.status(500).json({ 
             error: 'Erro ao criar usuário',
             details: error.message 

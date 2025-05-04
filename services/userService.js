@@ -5,6 +5,21 @@ const userService = {
         try {
             console.log('Tentando criar usuário:', username);
             
+            // Verifica se o usuário já existe
+            const { data: existingUser, error: checkError } = await supabase
+                .from('users')
+                .select('username')
+                .eq('username', username)
+                .single();
+
+            if (checkError && checkError.code !== 'PGRST116') { // PGRST116 é o código de "não encontrado"
+                throw new Error(`Erro ao verificar usuário existente: ${checkError.message}`);
+            }
+
+            if (existingUser) {
+                throw new Error('Nome de usuário já está em uso');
+            }
+            
             const { data, error } = await supabase
                 .from('users')
                 .insert({
