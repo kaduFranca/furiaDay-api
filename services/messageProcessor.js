@@ -64,14 +64,8 @@ const messageProcessor = {
 
     handleProximosJogos: async function() {
         try {
-            if (!this.selectedTeam) {
-                return {
-                    content: 'Por favor, selecione um time primeiro.',
-                    options: ['🐾 FURIA Ma', '🎯 FURIA Fe', '🎓 FURIA Academy']
-                };
-            }
-
-            const matches = await liquipediaScraper.getTeamData(this.selectedTeam);
+            const team = this.selectedTeam || 'FURIA Ma';
+            const matches = await liquipediaScraper.getTeamData(team);
             const hoje = new Date();
             
             // Filtra apenas os jogos futuros
@@ -82,7 +76,7 @@ const messageProcessor = {
 
             if (proximosJogos.length === 0) {
                 return {
-                    content: `Não há jogos marcados até o momento para a ${this.selectedTeam}.`,
+                    content: `Não há jogos marcados até o momento para a ${team}.`,
                     options: []
                 };
             }
@@ -100,7 +94,7 @@ const messageProcessor = {
             }).join('\n\n');
 
             return {
-                content: `Próximos jogos da ${this.selectedTeam}:\n\n${mensagem}`,
+                content: `Próximos jogos da ${team}:\n\n${mensagem}`,
                 options: []
             };
         } catch (error) {
