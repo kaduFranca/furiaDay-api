@@ -45,7 +45,15 @@ const messageProcessor = {
 
             const user = users[0];
             console.log('Time selecionado encontrado:', user.selected_team);
-            return user.selected_team || 'FURIA Ma';
+            
+            // Converte o nome do time para o formato correto
+            const team = user.selected_team || 'FURIA Ma';
+            const formattedTeam = team.split(' ').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
+            
+            console.log('Time formatado:', formattedTeam);
+            return formattedTeam;
         } catch (error) {
             console.error('Erro ao recuperar time selecionado:', error);
             return 'FURIA Ma';
