@@ -10,9 +10,7 @@ const messageProcessor = {
         'opcoes': 'handleOpcoes',
         'calendario': 'handleCalendario',
         'proximos jogos': 'handleProximosJogos',
-        'partidas passadas': 'handlePartidasPassadas',
-        'campeonatos': 'handleCampeonatos',
-        'campeonatos passados': 'handleCampeonatosPassados'
+        'partidas passadas': 'handlePartidasPassadas'
     },
 
     // Função para salvar o time selecionado no banco de dados
@@ -99,6 +97,62 @@ const messageProcessor = {
             console.error('Erro ao buscar próximos jogos:', error);
             return {
                 content: 'Desculpe, não foi possível buscar os próximos jogos no momento.',
+                options: []
+            };
+        }
+    },
+
+    handlePartidasPassadas: async function(userId) {
+        try {
+            console.log('Buscando partidas passadas para userId:', userId);
+            const team = await this.getSelectedTeam(userId);
+            console.log('Time selecionado:', team);
+            
+            const matches = await liquipediaScraper.getTeamData(team);
+            console.log('Partidas encontradas:', matches);
+            
+            const hoje = new Date();
+            console.log('Data atual:', hoje);
+            
+            // Filtra apenas os jogos passados
+            const partidasPassadas = matches.filter(match => {
+                const dataJogo = new Date(match.timestamp);
+                console.log('Data do jogo:', dataJogo);
+                return dataJogo < hoje;
+            });
+
+            console.log('Partidas passadas filtradas:', partidasPassadas);
+
+            if (partidasPassadas.length === 0) {
+                return {
+                    content: `Não há partidas passadas registradas para a ${team}.`,
+                    options: []
+                };
+            }
+
+            // Formata a mensagem com as partidas passadas
+            const mensagem = partidasPassadas.map(jogo => {
+                const data = new Date(jogo.timestamp).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                });
+                const hora = new Date(jogo.timestamp).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                return `📅 ${data}, ${hora}\n🏆 ${jogo.event}\n${jogo.team1} ${jogo.score} ${jogo.team2}`;
+            }).join('\n\n');
+
+            return {
+                content: `Partidas passadas da ${team}:\n\n${mensagem}`,
+                options: []
+            };
+        } catch (error) {
+            console.error('Erro detalhado ao buscar partidas passadas:', error);
+            console.error('Stack trace:', error.stack);
+            return {
+                content: 'Desculpe, não foi possível buscar as partidas passadas no momento.',
                 options: []
             };
         }
