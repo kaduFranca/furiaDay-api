@@ -12,17 +12,28 @@ const allowedOrigins = [
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
+    console.log('=== CORS Debug ===');
+    console.log('Request URL:', req.url);
+    console.log('Request Method:', req.method);
     console.log('Origin:', origin);
+    console.log('Headers:', req.headers);
     
     // Verifica se a origem está na lista de domínios permitidos
-    if (allowedOrigins.some(allowedOrigin => {
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
         if (allowedOrigin.includes('*')) {
             const regex = new RegExp('^' + allowedOrigin.replace('*', '.*') + '$');
             return regex.test(origin);
         }
         return allowedOrigin === origin;
-    })) {
+    });
+
+    console.log('Is Origin Allowed:', isAllowed);
+    
+    if (isAllowed) {
         res.header('Access-Control-Allow-Origin', origin);
+    } else {
+        console.log('Origin not allowed:', origin);
+        console.log('Allowed origins:', allowedOrigins);
     }
 
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -34,6 +45,7 @@ app.use((req, res, next) => {
     // Responde imediatamente para requisições OPTIONS
     if (req.method === 'OPTIONS') {
         console.log('OPTIONS request received');
+        console.log('Response Headers:', res.getHeaders());
         return res.status(200).end();
     }
     
