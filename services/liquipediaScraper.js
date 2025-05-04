@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const moment = require('moment');
 
 const LIQUIPEDIA_URL = 'https://liquipedia.net/counterstrike/FURIA/Matches';
 
@@ -66,7 +67,7 @@ const convertLiquipediaDate = (dateStr) => {
     try {
         console.log('Convertendo data:', dateStr);
         
-        // Remove o fuso horário e converte para UTC
+        // Remove o fuso horário
         const dateWithoutTZ = dateStr
             .replace(' BRT', '')
             .replace(' EEST', '')
@@ -74,33 +75,15 @@ const convertLiquipediaDate = (dateStr) => {
             .replace(' CEST', '')
             .replace(' UTC', '');
         
-        // Converte o mês abreviado para o formato completo
-        const months = {
-            'Jan': 'January',
-            'Feb': 'February',
-            'Mar': 'March',
-            'Apr': 'April',
-            'May': 'May',
-            'Jun': 'June',
-            'Jul': 'July',
-            'Aug': 'August',
-            'Sep': 'September',
-            'Oct': 'October',
-            'Nov': 'November',
-            'Dec': 'December'
-        };
+        // Converte a data usando moment
+        const date = moment(dateWithoutTZ, 'MMM DD, YYYY - HH:mm');
         
-        let formattedDate = dateWithoutTZ;
-        for (const [abbr, full] of Object.entries(months)) {
-            if (dateWithoutTZ.includes(abbr)) {
-                formattedDate = dateWithoutTZ.replace(abbr, full);
-                break;
-            }
+        if (!date.isValid()) {
+            console.error('Data inválida:', dateWithoutTZ);
+            return null;
         }
         
-        const date = new Date(formattedDate);
-        console.log('Data convertida:', date);
-        
+        console.log('Data convertida:', date.toISOString());
         return date.toISOString();
     } catch (error) {
         console.error('Erro ao converter data:', dateStr, error);
