@@ -10,6 +10,7 @@ const allowedOrigins = [
     'https://furia-*.vercel.app'
 ];
 
+// Middleware CORS
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     console.log('=== CORS Debug ===');
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
         console.log('Allowed origins:', allowedOrigins);
     }
 
+    // Headers CORS
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Referer, User-Agent, Sec-Ch-Ua, Sec-Ch-Ua-Mobile, Sec-Ch-Ua-Platform');
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -56,6 +58,15 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
+// Middleware para log de todas as requisições
+app.use((req, res, next) => {
+    console.log('=== Request Debug ===');
+    console.log('Method:', req.method);
+    console.log('Path:', req.path);
+    console.log('Headers:', req.headers);
+    next();
+});
 
 // Registra as rotas
 app.use('/users', userRouter);
