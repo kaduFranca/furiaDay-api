@@ -96,21 +96,23 @@ const userService = {
         try {
             console.log('Verificando credenciais para:', username);
             
-            const { data: user, error } = await supabase
+            const { data: users, error } = await supabase
                 .from('users')
                 .select('*')
                 .eq('username', username)
-                .eq('password', password)
-                .single();
+                .eq('password', password);
 
             if (error) {
-                if (error.code === 'PGRST116') { // Não encontrado
-                    return null;
-                }
                 throw new Error(`Erro ao verificar credenciais: ${error.message}`);
             }
 
-            return user;
+            // Se não encontrou nenhum usuário ou a senha não confere
+            if (!users || users.length === 0) {
+                return null;
+            }
+
+            // Retorna o primeiro usuário encontrado
+            return users[0];
         } catch (error) {
             console.error('Erro ao verificar credenciais:', error);
             throw error;
@@ -118,4 +120,5 @@ const userService = {
     }
 };
 
+module.exports = userService; 
 module.exports = userService; 
