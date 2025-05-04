@@ -5,7 +5,7 @@ const userService = require('../services/userService');
 // Rota para criar um novo usuário
 router.post('/create', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, selected_team } = req.body;
         
         if (!username || !password) {
             return res.status(400).json({ 
@@ -13,7 +13,7 @@ router.post('/create', async (req, res) => {
             });
         }
 
-        const user = await userService.createUser(username, password);
+        const user = await userService.createUser(username, password, selected_team);
         res.status(201).json({
             message: 'Usuário criado com sucesso',
             user: {

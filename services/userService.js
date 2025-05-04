@@ -1,7 +1,7 @@
 const supabase = require('../supabase/client');
 
 const userService = {
-    async createUser(username, password) {
+    async createUser(username, password, selected_team) {
         try {
             console.log('Tentando criar usuário:', username);
             
@@ -9,7 +9,8 @@ const userService = {
                 .from('users')
                 .insert({
                     username: username,
-                    password: password
+                    password: password,
+                    selected_team: selected_team || 'FURIA Ma'
                 })
                 .select()
                 .single();
