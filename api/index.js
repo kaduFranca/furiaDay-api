@@ -18,8 +18,8 @@ app.use((req, res, next) => {
     console.log('Origin:', origin);
     console.log('Headers:', req.headers);
     
-    // Verifica se a origem está na lista de domínios permitidos
-    const isAllowed = allowedOrigins.some(allowedOrigin => {
+    // Se não houver origem (requisição do mesmo domínio) ou se a origem for permitida
+    const isAllowed = !origin || allowedOrigins.some(allowedOrigin => {
         if (allowedOrigin.includes('*')) {
             const regex = new RegExp('^' + allowedOrigin.replace('*', '.*') + '$');
             return regex.test(origin);
@@ -30,7 +30,10 @@ app.use((req, res, next) => {
     console.log('Is Origin Allowed:', isAllowed);
     
     if (isAllowed) {
-        res.header('Access-Control-Allow-Origin', origin);
+        // Se não houver origem, não definimos o header Access-Control-Allow-Origin
+        if (origin) {
+            res.header('Access-Control-Allow-Origin', origin);
+        }
     } else {
         console.log('Origin not allowed:', origin);
         console.log('Allowed origins:', allowedOrigins);
