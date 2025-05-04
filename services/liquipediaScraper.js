@@ -8,17 +8,43 @@ const liquipediaScraper = {
         try {
             const { data } = await axios.get(LIQUIPEDIA_URL, {
                 headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
                 }
             });
+
             const $ = cheerio.load(data);
+            const matches = [];
 
-            // Buscar o elemento com ID firstHeading
-            const firstHeading = $('#firstHeading').text().trim();
+            // Seleciona todas as linhas da tabela
+            $('table.wikitable tr').each((_, row) => {
+                const cols = $(row).find('td');
+                
+                // Verifica se a linha tem colunas suficientes
+                if (cols.length >= 7) {
+                    const date = $(cols[0]).text().trim();
+                    const tier = $(cols[1]).text().trim();
+                    const matchType = $(cols[2]).text().trim();
+                    const event = $(cols[5]).text().trim();
+                    const team1 = $(cols[6]).text().trim();
+                    const score = $(cols[7]).text().trim();
+                    const team2 = $(cols[8]).text().trim();
 
-            return {
-                firstHeading
-            };
+                    // Adiciona o objeto à lista de partidas
+                    if (date && team1 && team2) {
+                        matches.push({
+                            date,
+                            tier,
+                            matchType,
+                            event,
+                            team1,
+                            score,
+                            team2
+                        });
+                    }
+                }
+            });
+
+            return matches;
         } catch (error) {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
             throw new Error('Não foi possível obter os dados da FURIA na Liquipedia');
