@@ -27,8 +27,25 @@ const messageProcessor = {
     // Função para recuperar o time selecionado do banco de dados
     async getSelectedTeam(userId) {
         try {
-            const user = await userService.getUserByUsername(userId);
-            return user?.selected_team || 'FURIA Ma';
+            console.log('Buscando time do usuário:', userId);
+            const { data: users, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', userId);
+
+            if (error) {
+                console.error('Erro ao buscar usuário:', error);
+                return 'FURIA Ma';
+            }
+
+            if (!users || users.length === 0) {
+                console.log('Usuário não encontrado');
+                return 'FURIA Ma';
+            }
+
+            const user = users[0];
+            console.log('Time selecionado encontrado:', user.selected_team);
+            return user.selected_team || 'FURIA Ma';
         } catch (error) {
             console.error('Erro ao recuperar time selecionado:', error);
             return 'FURIA Ma';
