@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
 };
 
 async function handlePost(req, res) {
-  const { content, timestamp, options } = req.body;
+  const { content, timestamp, options, userId } = req.body;
 
   if (!content || typeof content !== 'string') {
     return res.status(400).json({ error: 'O conteúdo da mensagem é obrigatório e deve ser uma string' });
@@ -36,7 +36,8 @@ async function handlePost(req, res) {
         content,
         timestamp: timestamp || new Date().toISOString(),
         isBot: false,
-        options: JSON.stringify(options || [])
+        options: JSON.stringify(options || []),
+        userId: userId
       })
       .select()
       .single();
@@ -46,14 +47,15 @@ async function handlePost(req, res) {
     }
 
     // Só depois que a mensagem do usuário for persistida, geramos e salvamos a resposta do bot
-    const botResponse = await messageProcessor.processMessage(content);
+    const botResponse = await messageProcessor.processMessage(content, userId);
     const { data: botMessage, error: botError } = await supabase
       .from('messages')
       .insert({ 
         content: botResponse.content,
         timestamp: new Date().toISOString(),
         isBot: true,
-        options: JSON.stringify(botResponse.options)
+        options: JSON.stringify(botResponse.options),
+        userId: userId
       })
       .select()
       .single();
