@@ -26,9 +26,10 @@ app.use((req, res, next) => {
     }
 
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Referer, User-Agent, Sec-Ch-Ua, Sec-Ch-Ua-Mobile, Sec-Ch-Ua-Platform');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Max-Age', '86400'); // 24 horas
+    res.header('Access-Control-Expose-Headers', 'Content-Length, Content-Type');
     
     // Responde imediatamente para requisições OPTIONS
     if (req.method === 'OPTIONS') {
