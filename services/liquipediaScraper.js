@@ -13,12 +13,21 @@ const liquipediaScraper = {
             });
             const $ = cheerio.load(data);
 
-            // Exemplo: pegar o título da página
-            const titulo = $('h1.firstHeading').text();
-            
+            // Encontrar a tabela de partidas recentes
+            const matches = [];
+            $('tr.recent-matches-bg-lose, tr.recent-matches-bg-win').each((i, element) => {
+                const match = {
+                    team1: $(element).find('.block-team.flipped .name a').text().trim(),
+                    team2: $(element).find('.block-team:not(.flipped) .name a').text().trim(),
+                    score: $(element).find('.match-table-score').text().trim(),
+                    event: $(element).find('td:nth-child(6) a').text().trim(),
+                    matchLink: $(element).find('.plainlinks.vodlink a').first().attr('href') || ''
+                };
+                matches.push(match);
+            });
+
             return {
-                titulo,
-                // Aqui você pode adicionar mais dados que deseja extrair
+                matches
             };
         } catch (error) {
             console.error('Erro ao fazer scraping da Liquipedia:', error);
